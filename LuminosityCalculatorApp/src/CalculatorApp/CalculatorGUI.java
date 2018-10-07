@@ -11,8 +11,9 @@ import java.awt.Toolkit;
 import javax.swing.ImageIcon;
 
 public class CalculatorGUI extends JFrame {
-	/*Variable for main panel class*/
+	/*Variable for Main panel*/
 	private mainPanel MainPanel;
+	private sciencePanel SciencePanel;
 	/*Variables for JMenu*/
 	private JMenuBar menuBar;
 	private JMenu mnMenu;
@@ -31,14 +32,20 @@ public class CalculatorGUI extends JFrame {
 		setResizable(false);
 		setTitle("The Luminosity Calculator");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 500);
+		setBounds(600, 300, 450, 500);
 		MenuBarItems();
-		setContentPane(MainPanel);		
+		getContentPane().setLayout(null);
+		
+		MainPanel = new mainPanel();
+		getContentPane().add(MainPanel);
+		
+		SciencePanel = new sciencePanel();
+		getContentPane().add(SciencePanel);
 	}
 	/*
 	 * MenuBar Properties
 	 * */
-	private void MenuBarItems(){
+	void MenuBarItems(){
 		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
@@ -55,7 +62,6 @@ public class CalculatorGUI extends JFrame {
 		mntmClose.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, InputEvent.META_MASK));
 		mnMenu.add(mntmClose);
 		
-		MainPanel = new mainPanel();		
 	}
 }//The Last Bracket
 /****Disclamer****

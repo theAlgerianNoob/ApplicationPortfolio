@@ -8,8 +8,13 @@ import java.awt.Component;
 import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.Cursor;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class mainPanel extends JPanel {
+	/*Variable for Science panel*/
+	private sciencePanel SciencePanel;
+	private CalculatorGUI calculatorGUI;
 	/*Variables for Labels*/
 	private JLabel imgBanner;
 	private JLabel titleLabel1;
@@ -21,21 +26,21 @@ public class mainPanel extends JPanel {
 	private JButton TheCalculatorBtn;
 	
 	public mainPanel(){
-		panelProperties();
+		panel1Properties();
 	}
 	/*
 	 * Panel Properties
 	 * */
-	private void panelProperties(){
-		setBounds(100, 100, 450, 456);
+	private void panel1Properties(){
+		setBounds(0, 0, 450, 456);
 		setLayout(null);
-		Labels();
-		Buttons();	
+		panel1Labels();
+		panel1Buttons();	
 	}
 	/*
 	 * Label Properties
 	 * */
-	private void Labels(){
+	private void panel1Labels(){
 		imgBanner = new JLabel("\n");
 		imgBanner.setIcon(new ImageIcon(mainPanel.class.getResource("/Resources/Images/SpaceImage.jpg")));
 		imgBanner.setBounds(0, 0, 450, 130);
@@ -67,29 +72,35 @@ public class mainPanel extends JPanel {
 		helpIcon.setIcon(new ImageIcon(mainPanel.class.getResource("/Resources/Icons/info.png")));
 		helpIcon.setBounds(213, 376, 24, 24);
 		add(helpIcon);
-		
 	}
 	/*
 	 * Buttons Properties
 	 * */
-	private void Buttons(){
+	private void panel1Buttons(){
+		
 		TheScienceBtn = new JButton("The Science\n");
+		TheScienceBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent args) {
+				//SciencePanel.setVisible(true);
+				//calculatorGUI.getContentPane().add(SciencePanel).setVisible(true);	
+				setVisible(false);
+			}
+		});
 		TheScienceBtn.setVerticalTextPosition(SwingConstants.BOTTOM);
 		TheScienceBtn.setHorizontalTextPosition(SwingConstants.CENTER);
-		TheScienceBtn.setIcon(new ImageIcon(mainPanel.class.getResource("/Resources/Icons/physics.png")));
+		TheScienceBtn.setIcon(new ImageIcon(mainPanel.class.getResource("/Resources/Icons/atom.png")));
 		TheScienceBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 		TheScienceBtn.setBounds(45, 310, 140, 70);
 		add(TheScienceBtn);
 		
 		TheCalculatorBtn = new JButton("The Calculator");
 		TheCalculatorBtn.setHorizontalTextPosition(SwingConstants.CENTER);
-		TheCalculatorBtn.setIcon(new ImageIcon(mainPanel.class.getResource("/Resources/Icons/calculating.png")));
+		TheCalculatorBtn.setIcon(new ImageIcon(mainPanel.class.getResource("/Resources/Icons/calculator.png")));
 		TheCalculatorBtn.setVerticalTextPosition(SwingConstants.BOTTOM);
 		TheCalculatorBtn.setBounds(270, 310, 140, 70);
 		add(TheCalculatorBtn);
 		
 	}
-
 }//The Last Bracket
 /****Disclamer****
  * I will be declaring all of the resources I use in the section of the code:
@@ -97,7 +108,7 @@ public class mainPanel extends JPanel {
  * -The Image used for the imgBanner label was from http://getwallpapers.com/collection/space-wallpapers-1920x1080
  * -The Icon used for the helpIcon was made by Smashicons from http://www.flaticons.com
  * -The Icon used for TheScienceBtn button was made by Freepik from http://www.flaticons.com 
- * -The Icon used for TheCalculatorBtn button was made by Freepik from http://www.flaticons.com 
+ * -The Icon used for TheCalculatorBtn button was made by Smashicons from http://www.flaticons.com 
  * 
  * */
 
