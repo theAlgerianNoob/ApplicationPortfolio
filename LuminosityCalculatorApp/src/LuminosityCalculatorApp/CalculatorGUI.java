@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -41,10 +42,10 @@ public class CalculatorGUI extends JFrame {
 	
 	/*Label variables*/
 	private JLabel lblImgBanner, lblImgBanner2, lblImgBanner3, lblImgTabWallpaper1, lblTitle1, lblTitle2, lblTitle3, lblHelp, lblTitle4, lblTitle5, lblTitle6, lblTitle7;
-	private JLabel lblNameofStarGalaxy, lblRadius, lblPower1, lblUnits1, lblTemperature, lblPower2, lblUnits2, lblLuminosity, lblGw, lblSave;
+	private JLabel lblNameofStarGalaxy, lblRadius, lblPower1, lblUnits1, lblTemperature, lblPower2, lblUnits2, lblLuminosity, lblSave;
 	
 	/*Button variables*/
-	private JButton btnMainMenu, btnMainMenu2, btnScience, btnScience2, btnCalculator, btnCalculator2;
+	private JButton btnMainMenu, btnMainMenu2, btnScience, btnScience2, btnCalculator, btnCalculator2, btnCalculate;
 	
 	/*Text area and Scroll pane variables*/
 	private JTextArea txtArea;
@@ -54,20 +55,17 @@ public class CalculatorGUI extends JFrame {
 	private JTabbedPane tabbedPane;
 	
 	/*Text Field variables*/
-	private JTextField txtFldName;
-	private JTextField txtFldRadius;
-	private JTextField txtFldTemperature;
-	private JTextField txtFldLuminosity;
-	
-	/*JSpinner variables*/
-	private JSpinner spinner1;
-	private JSpinner spinner2;
-	
-	private JButton btnCalculate;
+	private JTextField txtFldName, txtFldRadius, txtFldTemperature;
 
-	/*private JTextField textField;
-	private JTextField textField_1;
-	private JPanel panel_1;*/
+	/*JSpinner variables*/
+	private JSpinner spinner1, spinner2;
+	
+	/*Calculator variables*/
+	double rSun = 695700.0, tSun = 5778, lSun = 3.82*(Math.pow(10, 26));
+	double r, t, radius, temperature, LuminosityAns;
+	int v1, v2;
+	String name, ans;
+	DecimalFormat decimal = new DecimalFormat("#,##0.00");
 	
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *--------------------------------------------------------------FRAME PROPERTIES------------------------------------------------------------------------------------------------
@@ -84,7 +82,6 @@ public class CalculatorGUI extends JFrame {
 		MainPanel();
 		SciencePanel();
 		CalculatorPanel();
-		
 	}
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *--------------------------------------------------------------MENU BAR PROPERTIES---------------------------------------------------------------------------------------------
@@ -249,8 +246,6 @@ public class CalculatorGUI extends JFrame {
 		lblImgBanner2.setIcon(new ImageIcon(CalculatorGUI.class.getResource("/Resources/Images/SpaceImage.jpg")));
 		lblImgBanner2.setBounds(0, 454, 550, 102);
 		pnlScience.add(lblImgBanner2);
-		
-		//pnlScience.setVisible(false); pnlCalculator.setVisible(true);
 	}
 /*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *--------------------------------------------------------------TEXT AREA PROPERTIES-------------------------------------------------------------------------------------------
@@ -310,7 +305,9 @@ public class CalculatorGUI extends JFrame {
 		btnScience2.setIcon(new ImageIcon(CalculatorGUI.class.getResource("/Resources/Icons/atom.png")));
 		btnScience2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0){ 
-			pnlCalculator.setVisible(false); pnlScience.setVisible(true);}});
+			pnlCalculator.setVisible(false); pnlScience.setVisible(true);
+			/*txtFldName.setText(""); txtFldRadius.setText(""); txtFldTemperature.setText("");
+			spinner1.setValue("0"); spinner2.setValue("0"); lblLuminosity.setText("");*/}});
 		btnScience2.setVerticalTextPosition(SwingConstants.BOTTOM);
 		btnScience2.setHorizontalTextPosition(SwingConstants.CENTER);
 		btnScience2.setFont(new Font("Monospaced", Font.PLAIN, 15));
@@ -328,11 +325,6 @@ public class CalculatorGUI extends JFrame {
 		
 		/*Tab Panel Properties*/
 		tabbedPanels();
-		
-		
-		
-		
-		
 	}
 /*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *--------------------------------------------------------------TABBED PANEL PROPERTIES----------------------------------------------------------------------------------------
@@ -345,6 +337,16 @@ public class CalculatorGUI extends JFrame {
 		tabbedPane.setFont(new Font("Monospaced", Font.PLAIN, 13));
 		tabbedPane.setBounds(6, 72, 538, 381);
 		pnlCalculator.add(tabbedPane);
+		
+		/*SubPanel Properties*/
+		LuminositySubPanel();
+		AreaSubPanel();	
+	}
+/*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+*--------------------------------------------------------------LUMINOSITY SUBPANEL PROPERTIES---------------------------------------------------------------------------------
+*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+	void LuminositySubPanel(){
 		
 		/*Luminosity Calculation Panel*/
 		pnlLuminosity = new JPanel();
@@ -372,6 +374,21 @@ public class CalculatorGUI extends JFrame {
 		pnlLuminosity.add(lblRadius);
 		
 		txtFldRadius = new JTextField();
+		/*This feature below was supposed to disable the calculator button and tell the user that the 
+		 *values they put, which would be letters in this case in invalid and needs to be numbers only.*/
+		/*txtFldRadius.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				try{
+					r=Double.parseDouble(txtFldRadius.getText());
+					r = r*10;
+					lblError1.setText("");
+					btnCalculate.setEnabled(true);
+					
+				}catch(NumberFormatException e1){
+					lblError1.setText("Invalid Value!!, Please Write a Number Value");
+					btnCalculate.setEnabled(false);	
+				}}});*/
 		txtFldRadius.setFont(new Font("Monospaced", Font.PLAIN, 13));
 		txtFldRadius.setBounds(1, 80, 375, 26);
 		pnlLuminosity.add(txtFldRadius);
@@ -394,154 +411,143 @@ public class CalculatorGUI extends JFrame {
 		lblUnits1.setBounds(461, 85, 35, 16);
 		pnlLuminosity.add(lblUnits1);
 		
+		/*This was meant to be the error message
+		private JLabel lblError1;
+		lblError1 = new JLabel("");
+		lblError1.setForeground(Color.WHITE);
+		lblError1.setFont(new Font("Monospaced", Font.PLAIN, 13));
+		lblError1.setBounds(6, 106, 370, 16);
+		pnlLuminosity.add(lblError1);*/
+		
 		lblTemperature = new JLabel("Star/Galaxy Surface Temperature:");
 		lblTemperature.setVerticalAlignment(SwingConstants.TOP);
 		lblTemperature.setFont(new Font("Monospaced", Font.PLAIN, 13));
 		lblTemperature.setForeground(Color.WHITE);
-		lblTemperature.setBounds(6, 117, 256, 16);
+		lblTemperature.setBounds(6, 125, 256, 16);
 		pnlLuminosity.add(lblTemperature);
 		
 		txtFldTemperature = new JTextField();
+		/*Similar feature as the radius function above*/
+		/*txtFldTemperature.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent arg0) {
+				try{
+					t=Double.parseDouble(txtFldTemperature.getText());
+					t = t*10;
+					lblError2.setText("");
+					btnCalculate.setEnabled(true);
+					
+				}catch(NumberFormatException e1){
+					lblError2.setText("Invalid Value!!, Please Write a Number Value");
+					btnCalculate.setEnabled(false);	
+				}}});*/
 		txtFldTemperature.setFont(new Font("Monospaced", Font.PLAIN, 13));
-		txtFldTemperature.setBounds(1, 134, 375, 26);
+		txtFldTemperature.setBounds(1, 142, 375, 26);
 		pnlLuminosity.add(txtFldTemperature);
 		txtFldTemperature.setColumns(10);
 		
 		lblPower2 = new JLabel("x10^");
 		lblPower2.setForeground(Color.WHITE);
 		lblPower2.setFont(new Font("Monospaced", Font.PLAIN, 13));
-		lblPower2.setBounds(375, 139, 35, 16);
+		lblPower2.setBounds(375, 147, 35, 16);
 		pnlLuminosity.add(lblPower2);
 		
 		spinner2 = new JSpinner();
 		spinner2.setFont(new Font("Monospaced", Font.PLAIN, 13));
-		spinner2.setBounds(409, 134, 50, 26);
+		spinner2.setBounds(409, 142, 50, 26);
 		pnlLuminosity.add(spinner2);
 		
 		lblUnits2 = new JLabel("K");
 		lblUnits2.setForeground(Color.WHITE);
 		lblUnits2.setFont(new Font("Monospaced", Font.PLAIN, 13));
-		lblUnits2.setBounds(461, 139, 35, 16);
+		lblUnits2.setBounds(461, 147, 35, 16);
 		pnlLuminosity.add(lblUnits2);
 		
+		/*Similar as above
+		private JLabel lblError2;
+		lblError2 = new JLabel("");
+		lblError2.setFont(new Font("Monospaced", Font.PLAIN, 13));
+		lblError2.setForeground(Color.WHITE);
+		lblError2.setBounds(6, 168, 370, 16);
+		pnlLuminosity.add(lblError2);*/
+		
 		lblLuminosity = new JLabel();
+		lblLuminosity.setVerticalAlignment(SwingConstants.TOP);
 		lblLuminosity.setHorizontalAlignment(SwingConstants.CENTER);
 		lblLuminosity.setFont(new Font("Monospaced", Font.PLAIN, 15));
 		lblLuminosity.setForeground(Color.WHITE);
-		lblLuminosity.setBounds(6, 238, 505, 16);
+		lblLuminosity.setBounds(6, 221, 505, 65);
 		pnlLuminosity.add(lblLuminosity);
-		
-		/*txtFldLuminosity = new JTextField();
-		txtFldLuminosity.setEditable(false);
-		txtFldLuminosity.setBounds(1, 259, 453, 26);
-		pnlLuminosity.add(txtFldLuminosity);
-		txtFldLuminosity.setColumns(10);
-		
-		lblGw = new JLabel("GWatts");
-		lblGw.setForeground(Color.WHITE);
-		lblGw.setFont(new Font("Monospaced", Font.PLAIN, 13));
-		lblGw.setBounds(456, 264, 50, 16);
-		pnlLuminosity.add(lblGw);
 		
 		lblSave = new JLabel("");
 		lblSave.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		lblSave.setIcon(new ImageIcon(CalculatorGUI.class.getResource("/Resources/Icons/SaveBtn.png")));
 		lblSave.setBounds(242, 297, 32, 32);
+		lblSave.setVisible(false);
 		pnlLuminosity.add(lblSave);
 		
-		"Star/Galaxy Luminosity is:"*/
-		
+		/*The Calculation Part*/
 		btnCalculate = new JButton("Calculate");
 		btnCalculate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				double radius, r, temperature, t, LuminosityAns;
-				int v1, v2;
-				String name, ans;
-				DecimalFormat decimal = new DecimalFormat("#,##0.0000000000000000");
-				
-				name= txtFldName.getText();
-				r=Double.parseDouble(txtFldRadius.getText());
-				v1= (Integer) spinner1.getValue();
-				t=Double.parseDouble(txtFldTemperature.getText());
-				v2= (Integer) spinner2.getValue();
-				
-				radius = r * (Math.pow(10, v1));
-				temperature = t * (Math.pow(10, v2)); 
-				
-				LuminosityAns = radius * temperature;
-				
-				//ans = String.format("%.0f", LuminosityAns);
-				ans = decimal.format(LuminosityAns);
-				
-				
-				lblLuminosity.setText(name + "'s Luminosity is: " + ans + " GWatts");
-				
-				
-				
-				
-			}
-		});
-		btnCalculate.setBounds(200, 172, 117, 29);
+				try{
+					name= txtFldName.getText();
+					
+					r=Double.parseDouble(txtFldRadius.getText());
+					t=Double.parseDouble(txtFldTemperature.getText());
+
+					v1= (Integer) spinner1.getValue();
+					v2= (Integer) spinner2.getValue();
+						
+					radius = r * (Math.pow(10, v1));
+					temperature = t * (Math.pow(10, v2));
+					
+					LuminosityAns = ((Math.pow(radius/695700, 2))*(Math.pow(temperature/5778, 4)))*lSun;				
+					ans = decimal.format(LuminosityAns);
+					
+					lblLuminosity.setText("<html>The Luminosity of " + name + " is: " + ans + " GWatts<html>");
+					
+					lblSave.setVisible(true);
+					
+				}catch(Exception e){
+					ImageIcon icon = new ImageIcon("/Users/Ryan/Documents/GitHub/ApplicationPortfolio/LuminosityCalculatorApp/src/Resources/Icons/Warning.png");
+					JOptionPane.showMessageDialog(null, "Input Error!\nPlease Re-Enter Name, Radius and/or Temperature.","Oops...", JOptionPane.ERROR_MESSAGE, icon);	
+				}
+				/*For Testing
+				 * To see of the calculations work, simply write for radius the same value as rSun = 695700 and 
+				 * the temperature the same value as tSun = 5778, and the answer should be equal to lSun, which is : 3.82E^26)) 
+				 * The variables and print outs below are there to help see if any part of the equation is wrong.
+				   
+				   double a1, a2, a3;
+				   System.out.print(radius + "\n");
+				   System.out.print(temperature + "\n");
+				   System.out.print(LuminosityAns + "\n");
+				   System.out.print(ans + "\n");
+				   a1 = radius/rSun;
+				   System.out.print(a1 + "\n");
+				   a2 = temperature/tSun; 
+				   System.out.print(a2 + "\n");*/
+			}});
+		btnCalculate.setBounds(200, 190, 117, 29);
 		pnlLuminosity.add(btnCalculate);
 		
-		
-		
-		
-		
-		
+		/*Luminosity Tab Panel Wallpaper*/
 		lblImgTabWallpaper1 = new JLabel("");
 		lblImgTabWallpaper1.setHorizontalAlignment(SwingConstants.CENTER);
 		lblImgTabWallpaper1.setIcon(new ImageIcon(CalculatorGUI.class.getResource("/Resources/Images/SpaceImage2.jpg")));
 		lblImgTabWallpaper1.setBounds(0, 0, 517, 335);
 		pnlLuminosity.add(lblImgTabWallpaper1);
-		/*Luminosity Tab Panel Wallpaper*/
-
+	}
+/*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+*--------------------------------------------------------------AREA SUBPANEL PROPERTIES---------------------------------------------------------------------------------
+*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+	void AreaSubPanel(){
+		
 		/*Area Calculation Panel*/
 		pnlArea = new JPanel();
 		tabbedPane.addTab("Area", null, pnlArea, null);
-	}	
-	
-	/*JSpinner spinner = new JSpinner();
-	spinner.setBounds(418, 192, 61, 25);
-	pnlCalculator.add(spinner);
-	
-	textField = new JTextField();
-	textField.setBounds(228, 192, 130, 26);
-	pnlCalculator.add(textField);
-	textField.setColumns(10);
-	
-	JButton btnNewButton = new JButton("New button");
-	btnNewButton.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent arg0) {
-			double v1, ans;
-			Integer v2 = (Integer) spinner.getValue();
-
-			v1 = Double.parseDouble(textField.getText());
-			
-			ans = v1*v2;
-			textField_1.setText(Double.toString(ans));
-			
-			
-		}
-	});
-	btnNewButton.setBounds(309, 261, 117, 29);
-	pnlCalculator.add(btnNewButton);
-	
-	textField_1 = new JTextField();
-	textField_1.setBounds(244, 317, 130, 26);
-	pnlCalculator.add(textField_1);
-	textField_1.setColumns(10);*/
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		
+	}
 /*-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 *--------------------------------------------------------------------------MAIN------------------------------------------------------------------------------------------------
 *----------------------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -561,7 +567,9 @@ public class CalculatorGUI extends JFrame {
  * -The Icon used for the mntmClose was made by Smashicons from http://www.flaticons.com
  * -The Icon used for btnScience and btnScience2 button was made by Freepik from http://www.flaticons.com 
  * -The Icon used for btnCalculator and btnCalculator2 button was made by Smashicons from http://www.flaticons.com
- * -The Icon used for btnMainMenu and btnMainMenu2 was made by Freepik from http://www.flaticons.com  
+ * -The Icon used for btnMainMenu and btnMainMenu2 was made by Freepik from http://www.flaticons.com
+ * -The Icon used for lblSave was made by Dave Gandy from http://www.flaticons.com 
+ * -The Icon used for ImageIcon icon which has the name Warning.png was made by Gregor Cresnar from http://www.flaticons.com   
  * 
  * 
  * */
